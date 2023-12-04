@@ -1,5 +1,5 @@
 {
-  "name": "web-scraper",
+  "name": "scrap-whole-website",
   "version": "1.0.0",
   "description": "A simple node.js application for scraping the whole website contents and storing them in local machine according to the content file structure of the website. I'm using website [https://books.toscrape.com/](https://books.toscrape.com/) for scraping.",
   "main": "index.js",
@@ -7,6 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Suman Barua<sumanbarua576@gmail.com>",
+  "license": "GNU",
+  "dependencies": {
+    "@types/node": "^20.10.2",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "typescript": "^5.3.2"
+  }
 }
