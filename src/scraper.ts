@@ -14,6 +14,9 @@ async function scrapePage(url: string, baseDir: string): Promise<void> {
   if (!fs.existsSync(baseDir)) {
     fs.mkdirSync(baseDir, { recursive: true });
   }
+
+  const pagePath = path.join(baseDir, "index.html");
+  fs.writeFileSync(pagePath, response.data);
 }
 
 export async function scrapeWebsite(url: string): Promise<void> {
