@@ -6,6 +6,16 @@ import * as path from "path";
 // Donwload directory
 const downloadDir = "./downloaded_pages";
 
+async function scrapePage(url: string, baseDir: string): Promise<void> {
+  const response: AxiosResponse<any, any> = await axios.get(url);
+  const $: cheerio.CheerioAPI = cheerio.load(response.data);
+
+  // Save the HTML file
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir, { recursive: true });
+  }
+}
+
 export async function scrapeWebsite(url: string): Promise<void> {
   // Get website content
   const response: AxiosResponse<any, any> = await axios.get(url);
@@ -29,6 +39,6 @@ export async function scrapeWebsite(url: string): Promise<void> {
       fs.mkdirSync(pageDir, { recursive: true });
     }
 
-    console.log("PageURL:", pageUrl);
+    await scrapePage(pageUrl, pageDir);
   }
 }
