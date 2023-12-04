@@ -8,6 +8,11 @@ const downloadDir = "./downloaded_pages";
 
 async function downloadFile(url: string, filePath: string): Promise<void> {
   const response = await axios.get(url, { responseType: "arraybuffer" });
+
+  if (!fs.existsSync(path.dirname(filePath))) {
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  }
+
   fs.writeFileSync(filePath, Buffer.from(response.data));
 }
 
@@ -30,6 +35,18 @@ async function scrapePage(url: string, baseDir: string): Promise<void> {
       void downloadFile(cssUrl, cssPath);
     }
   );
+
+  $("script[src]").each((_: number, element: cheerio.Element): void => {
+    const jsUrl = new URL($(element).attr("src")!, url).href;
+    const jsPath = path.join(baseDir, "scripts", path.basename(jsUrl));
+    void downloadFile(jsUrl, jsPath);
+  });
+
+  $("img[src]").each((_: number, element: cheerio.Element): void => {
+    const imgUrl = new URL($(element).attr("src")!, url).href;
+    const imgPath = path.join(baseDir, "images", path.basename(imgUrl));
+    void downloadFile(imgUrl, imgPath);
+  });
 }
 
 export async function scrapeWebsite(url: string): Promise<void> {
