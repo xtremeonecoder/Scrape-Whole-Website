@@ -1,6 +1,6 @@
 import { scrapeWebsite } from "./scraper";
 
-async function main() {
+async function main(): Promise<void> {
   try {
     await scrapeWebsite("https://books.toscrape.com/");
     console.log("Web scraping completed successfully.");
