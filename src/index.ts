@@ -1,4 +1,4 @@
-import { scrapeWebsite } from "./scraper";
+import scrapeWebsite from "./scraper";
 
 /**
  * The main function for initiating web scraping on the specified website.

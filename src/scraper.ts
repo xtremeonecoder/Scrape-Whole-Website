@@ -47,7 +47,7 @@ async function downloadFile(url: string, filePath: string): Promise<void> {
 }
 
 /**
- * Synchronous function that downloads all files specified by a selector and attribute in a Cheerio object.
+ * Asynchronous function that downloads all files specified by a selector and attribute in a Cheerio object.
  *
  * @param {cheerio.CheerioAPI} $ - The Cheerio object representing the parsed HTML.
  * @param {any} selector - The selector used to identify elements containing the files to be downloaded.
@@ -55,19 +55,22 @@ async function downloadFile(url: string, filePath: string): Promise<void> {
  * @param {string} url - The base URL to resolve relative file URLs.
  * @returns {void} Does not return a value.
  */
-function downloadAllFiles(
+async function downloadAllFiles(
   $: cheerio.CheerioAPI,
   selector: any,
   attribute: string,
   url: string
-): void {
+): Promise<void> {
   // Implementation details:
   // - Uses the Cheerio object to select elements based on the provided selector.
   // - Extracts file URLs from the specified attribute within the selected elements.
   // - Downloads each file and saves it to the local filesystem, resolving relative URLs with the base URL.
   // - Performs side effects (downloads files), does not return a value.
 
-  $(selector).each((_: number, element: cheerio.Element): void => {
+  const elements = $(selector);
+
+  // Loop through all the elements
+  for (const element of elements) {
     // Formulate absolute url of the file
     const fileUrl = new URL($(element).attr(attribute)!, url).href;
 
@@ -75,9 +78,9 @@ function downloadAllFiles(
     const filePath = `${downloadDir}${fileUrl.split(".com")[1]}`;
 
     // Download file to local storage
-    void downloadFile(fileUrl, filePath);
+    await downloadFile(fileUrl, filePath);
     // console.log(`---- Downloaded: ${path.basename(filePath)}`);
-  });
+  }
 }
 
 /**
@@ -100,13 +103,13 @@ async function scrapePage(url: string, baseDir: string): Promise<void> {
   const $: cheerio.CheerioAPI = cheerio.load(response.data);
 
   // Extract and download CSS, Icons files
-  downloadAllFiles($, "link[href]", "href", url);
+  void downloadAllFiles($, "link[href]", "href", url);
 
   // Extract and download javascript files
-  downloadAllFiles($, "script[src]", "src", url);
+  void downloadAllFiles($, "script[src]", "src", url);
 
   // Extract and download image files
-  downloadAllFiles($, "img[src]", "src", url);
+  void downloadAllFiles($, "img[src]", "src", url);
 
   // Save the HTML file
   if (!fs.existsSync(baseDir)) {
@@ -187,13 +190,16 @@ async function extractUrlsFromCSS(cssPath: string): Promise<string[]> {
 }
 
 /**
- * Synchronous function that downloads resources specified by URLs and saves them locally.
+ * Asynchronous function that downloads resources specified by URLs and saves them locally.
  *
  * @param {string} url - The base website URL where the resources are hosted.
  * @param {string[]} fileLinks - An array of file links (URLs) to be downloaded.
  * @returns {void} Does not return a value; performs side effects (downloads files).
  */
-function downloadResourcesFromUrls(url: string, fileLinks: string[]): void {
+async function downloadResourcesFromUrls(
+  url: string,
+  fileLinks: string[]
+): Promise<void> {
   // Implementation details:
   // - Downloads resources specified by URLs and saves them locally.
 
@@ -206,7 +212,7 @@ function downloadResourcesFromUrls(url: string, fileLinks: string[]): void {
     const resourcePath = `${downloadDir}${absoluteUrl.split(".com")[1]}`;
 
     // Download the file
-    void downloadFile(absoluteUrl, resourcePath);
+    await downloadFile(absoluteUrl, resourcePath);
 
     // Progress message to console
     console.log(`--- Downloaded File: ${path.basename(absoluteUrl)}`);
@@ -220,7 +226,7 @@ function downloadResourcesFromUrls(url: string, fileLinks: string[]): void {
  * @param {string} url - The base website URL where the CSS file is hosted.
  * @returns {Promise<void>} A promise that resolves when the extraction and download process is completed.
  */
-async function extractUrlsFromCSSAndDownloadFiles(url: string) {
+async function extractUrlsFromCSSAndDownloadFiles(url: string): Promise<void> {
   // Implementation details:
   // - Combines the steps of extracting URLs from a CSS file and downloading the corresponding files.
   // - Involves reading the CSS file, extracting URLs, and initiating downloads.
@@ -248,7 +254,7 @@ async function extractUrlsFromCSSAndDownloadFiles(url: string) {
  * @param {string} url - The URL of the website to be scraped.
  * @returns {Promise<void>} A promise that resolves when the web scraping process is completed.
  */
-export async function scrapeWebsite(url: string): Promise<void> {
+async function scrapeWebsite(url: string): Promise<void> {
   // Implementation details:
   // - Recursively traverses all pages on the specified website.
   // - Downloads and saves files (e.g., HTML, CSS, JS, images, and CSS dependancy files) to disk, maintaining the file structure.
@@ -304,9 +310,11 @@ export async function scrapeWebsite(url: string): Promise<void> {
   console.log("Downloading CSS Dependancies:");
 
   // Download css dependancy files (such as - fontawesome and so on)
-  extractUrlsFromCSSAndDownloadFiles(url);
+  await extractUrlsFromCSSAndDownloadFiles(url);
 
   // Progress message to console
   console.log("Downloaded CSS Dependancies:");
   console.log("\n-----------------------------------------------\n");
 }
+
+export default scrapeWebsite;
