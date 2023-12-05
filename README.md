@@ -1,4 +1,4 @@
-# Scrap Whole Website
+# Scrape Whole Website
 
 A simple node.js application for scraping the whole website contents and storing them in local machine according to the content file structure of the website. I'm using website [https://books.toscrape.com/](https://books.toscrape.com/) for scraping.
 
@@ -28,3 +28,17 @@ Open `git bash` or any other terminal from the project root directory and follow
 - `npm install` (installs the application dependencies)
 - `npm update` (updates the application dependencies)
 - `npm start` (starts the application on terminal and starts scraping the given website. Basically, first it builds the production ready application and run the build version of the application.)
+
+## End Result
+
+- If setup is successful, then `npm start` command would execute for couple of munites. Please do not manually terminate the execution of the program. Once the scraping is completed, you will see the following success message.
+
+```
+Web scraping completed successfully.
+```
+
+- It will create a new directory `downloaded_pages` inside the root of the project. The whole website should be available in that directory.
+- Just explore the directory and click on the `index.html` file to open the downloaded website on your favorite browser.
+- Now you can browse every pages of the downloaded website offline.
+
+Cheers!!!!
