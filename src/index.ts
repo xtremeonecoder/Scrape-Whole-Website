@@ -17,4 +17,5 @@ async function main(): Promise<void> {
   }
 }
 
+// Initiate the scraping
 main();
